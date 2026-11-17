@@ -1,0 +1,420 @@
+{
+  "name": "Energia que dá Lucro - Alertas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c78a674c-ca7f-4aba-8b51-0fe329181a19",
+      "name": "Iniciar manualmente",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "id": "f932e8f2-3fb4-4aca-8554-e42fd72481bf",
+      "name": "A cada 5 minutos",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/eventos.json",
+        "options": {}
+      },
+      "id": "4c7fe91f-79e8-4dff-9772-e4cae6e9331a",
+      "name": "Ler eventos",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        240,
+        208
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const b = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst eventos=JSON.parse(b.toString('utf8'));\nif (!Array.isArray(eventos)) throw new Error('eventos.json deve conter uma lista');\nreturn [{json:{eventos}}];"
+      },
+      "id": "8a9542fd-9146-4135-9d84-d89b11cf8983",
+      "name": "Interpretar eventos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/lojas.json",
+        "options": {}
+      },
+      "id": "8eb57397-f58b-4f79-97f6-63e42638a2b8",
+      "name": "Ler lojas",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        688,
+        208
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const b=await this.helpers.getBinaryDataBuffer(0,'data');\nconst lojas=JSON.parse(b.toString('utf8'));\nif(!Array.isArray(lojas)) throw new Error('lojas.json deve conter uma lista');\nconst eventos=$('Interpretar eventos').first().json.eventos;\nreturn eventos.map(evento=>({json:{evento,lojas}}));"
+      },
+      "id": "65de9907-62fb-4795-9cb5-eacfdcc86c4f",
+      "name": "Preparar lote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "14e225a8-d479-4850-8ee2-1a1174354718",
+      "name": "Percorrer eventos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/controle_alertas.json",
+        "options": {}
+      },
+      "id": "862d40f0-8d6d-4cec-9eed-f98ed66a55fa",
+      "name": "Ler controle",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        304
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const b=await this.helpers.getBinaryDataBuffer(0,'data');\nconst controle=JSON.parse(b.toString('utf8'));\nif (!controle || !Array.isArray(controle.alertas) || !Array.isArray(controle.logs)) throw new Error('controle_alertas.json inválido');\nconst item=$('Percorrer eventos').first().json, e=item.evento, loja=item.lojas.find(l=>l.loja_id===e.loja_id);\nconst agora=new Date().toISOString(), erros=[];\nconst uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;\nif(!e || !uuid.test(e.id||'')) erros.push('id inválido');\nif(!loja) erros.push('loja desconhecida');\nif(loja && !(loja.equipamentos||[]).includes(e.equipamento_id)) erros.push('equipamento não cadastrado');\nif(!['porta_aberta','luz_acesa_sem_necessidade','temperatura_alta'].includes(e.tipo)) erros.push('tipo inválido');\nif(!Number.isInteger(e.duracao_s)||e.duracao_s<=0) erros.push('duração inválida');\nconst d=new Date(e.inicio);if(!e.inicio || Number.isNaN(d.getTime())) erros.push('início inválido');\nlet acao='ignorar', motivo='', chatId=null, mensagem='';\nif(erros.length) { acao='invalido';motivo=erros.join('; '); }\nelse if(e.tipo!=='porta_aberta'||e.duracao_s<=60) {motivo=e.tipo!=='porta_aberta'?'tipo sem regra de alerta':'duração não superior a 60 segundos';}\nelse {\n const fmt=new Intl.DateTimeFormat('en-GB',{timeZone:loja.fuso_horario||'America/Sao_Paulo',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});\n const t=fmt.format(d), h=loja.horario_funcionamento||{};\n if(!/^\\d\\d:\\d\\d$/.test(h.abertura||'')||!/^\\d\\d:\\d\\d$/.test(h.fechamento||'')||h.abertura>=h.fechamento){acao='invalido';motivo='horário de funcionamento inválido';}\n else if(t<h.abertura||t>=h.fechamento){motivo='evento fora do horário de funcionamento';}\n else if(controle.alertas.some(a=>a.evento_id===e.id)){acao='duplicado';motivo='evento já possui registro de envio ou reserva';}\n else if(!loja.destinatarios || !loja.destinatarios.telegram_chat_id){acao='configuracao';motivo='chat do Telegram não configurado';}\n else {acao='enviar';chatId=String(loja.destinatarios.telegram_chat_id);mensagem=`⚡ Energia que dá Lucro\\n${loja.nome}: ${e.equipamento_id} registrou porta aberta por ${e.duracao_s} segundos. Verifique o equipamento para evitar desperdício.`;\n controle.alertas.push({id:e.id+'-telegram',evento_id:e.id,loja_id:e.loja_id,canal:'telegram',status:'reservado',registrado_em:agora,mensagem});motivo='reserva registrada antes do envio';}\n}\ncontrole.logs.push({data_hora:agora,evento_id:e.id||null,loja_id:e.loja_id||null,resultado:acao,motivo});\nreturn [{json:{acao,evento_id:e.id||null,loja_id:e.loja_id||null,chatId,mensagem,controle},binary:{data:{data:Buffer.from(JSON.stringify(controle,null,2),'utf8').toString('base64'),mimeType:'application/json',fileName:'controle_alertas.json'}}}];"
+      },
+      "id": "57922312-8636-494b-be10-af9742ea971f",
+      "name": "Validar e reservar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/controle_alertas.json",
+        "options": {}
+      },
+      "id": "3f1d0cb4-f347-4fe6-8654-b7f1e79dce75",
+      "name": "Salvar controle antes do envio",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1808,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d4cea7c3-045a-41ef-a02c-d53f41834b05",
+              "leftValue": "={{ $json.acao }}",
+              "rightValue": "enviar",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c5b11168-722c-40e3-b037-1e59849ed489",
+      "name": "Precisa enviar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.mensagem }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9ad2a66f-5ab5-4769-9737-853544e94810",
+      "name": "Enviar Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2256,
+        160
+      ],
+      "webhookId": "3d797c51-56cf-44ef-b1de-9acee22764f7",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const planejado=$('Validar e reservar').first().json; const resposta=$input.first().json;\nconst controle=planejado.controle, agora=new Date().toISOString();\nconst registro=controle.alertas.find(x=>x.evento_id===planejado.evento_id && x.status==='reservado');\nif(!registro) throw new Error('Reserva não encontrada; verificar auditoria');\nconst sucesso=!!(resposta.message_id || resposta.result?.message_id);\nregistro.status=sucesso?'enviado':'incerto'; registro.enviado_em=sucesso?agora:null;\ncontrole.logs.push({data_hora:agora,evento_id:planejado.evento_id,loja_id:planejado.loja_id,resultado:registro.status,motivo:sucesso?'Envio confirmado pelo Telegram':'Envio sem confirmação; conferir antes de reenviar'});\nreturn [{json:{resultado:registro.status,evento_id:registro.evento_id},binary:{data:{data:Buffer.from(JSON.stringify(controle,null,2),'utf8').toString('base64'),mimeType:'application/json',fileName:'controle_alertas.json'}}}];"
+      },
+      "id": "1a2a6048-7055-4985-a5d2-f7e4778b166f",
+      "name": "Registrar resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/controle_alertas.json",
+        "options": {}
+      },
+      "id": "fb8fcf63-2108-4a49-93bc-6157c0a29ba4",
+      "name": "Salvar resultado",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0d8f41cb-82ea-4081-a6e2-550b529c169e",
+      "name": "Lote concluído",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Iniciar manualmente": {
+      "main": [
+        [
+          {
+            "node": "Ler eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "A cada 5 minutos": {
+      "main": [
+        [
+          {
+            "node": "Ler eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler eventos": {
+      "main": [
+        [
+          {
+            "node": "Interpretar eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interpretar eventos": {
+      "main": [
+        [
+          {
+            "node": "Ler lojas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler lojas": {
+      "main": [
+        [
+          {
+            "node": "Preparar lote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar lote": {
+      "main": [
+        [
+          {
+            "node": "Percorrer eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler controle": {
+      "main": [
+        [
+          {
+            "node": "Validar e reservar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar e reservar": {
+      "main": [
+        [
+          {
+            "node": "Salvar controle antes do envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar controle antes do envio": {
+      "main": [
+        [
+          {
+            "node": "Precisa enviar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Telegram": {
+      "main": [
+        [
+          {
+            "node": "Registrar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar resultado": {
+      "main": [
+        [
+          {
+            "node": "Salvar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar resultado": {
+      "main": [
+        [
+          {
+            "node": "Percorrer eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Percorrer eventos": {
+      "main": [
+        [
+          {
+            "node": "Lote concluído",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ler controle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Precisa enviar?": {
+      "main": [
+        [
+          {
+            "node": "Enviar Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Percorrer eventos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "nodeGroups": []
+}

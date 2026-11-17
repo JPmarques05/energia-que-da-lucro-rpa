@@ -1,0 +1,76 @@
+{
+  "name": "Energia que dá Lucro - Registro de falhas",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b56aec8d-1b9e-4dea-b8ce-c59614e81894",
+      "name": "Erro em fluxo vinculado",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const entrada=$input.first().json;const exec=entrada.execution||{};const trig=entrada.trigger||{};const raw=String(exec.error?.message||trig.error?.message||'');let categoria='erro_na_execucao';if(/ENOENT|not found|no such file/i.test(raw))categoria='arquivo_nao_encontrado';else if(/permission|EACCES|EPERM/i.test(raw))categoria='permissao_de_arquivo';else if(/JSON|parse|unexpected token|inválid/i.test(raw))categoria='dados_invalidos';else if(/timeout|timed out|ECONN|ENOTFOUND|network/i.test(raw))categoria='conexao_indisponivel';const permitidos=['Ler eventos','Interpretar eventos','Ler lojas','Preparar lote','Percorrer eventos','Ler controle','Validar e reservar','Salvar controle antes do envio','Enviar Telegram','Registrar resultado','Salvar resultado','Período semanal','Período mensal','Períodos da demonstração','Interpretar lojas','Ler resumos','Interpretar resumos','Ler recomendações','Preparar lojas e períodos','Percorrer resumos','Salvar reserva','Enviar pelo Gmail'];const nome=String(exec.lastNodeExecuted||trig.error?.node?.name||'');const id=String(exec.id||'');const item={data_hora:new Date().toISOString(),workflow_id:String(entrada.workflow?.id||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,100)||null,execucao_id:/^[a-zA-Z0-9_-]{1,100}$/.test(id)?id:null,nodo:permitidos.includes(nome)?nome:'outro',categoria,descricao:'Falha interrompeu a execução; consultar detalhes na aba Executions do n8n.'};return [{json:item,binary:{data:{data:Buffer.from(JSON.stringify(item)+'\\n','utf8').toString('base64'),mimeType:'application/x-ndjson',fileName:'falhas_execucao.jsonl'}}}];"
+      },
+      "id": "615715c4-04f0-4a8b-82e2-e338d9526440",
+      "name": "Preparar registro seguro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/falhas_execucao.jsonl",
+        "options": {
+          "append": true
+        }
+      },
+      "id": "677bb447-bd76-477b-b231-7fffa7299aa2",
+      "name": "Acrescentar registro de falha",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        496,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Erro em fluxo vinculado": {
+      "main": [
+        [
+          {
+            "node": "Preparar registro seguro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar registro seguro": {
+      "main": [
+        [
+          {
+            "node": "Acrescentar registro de falha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": []
+}

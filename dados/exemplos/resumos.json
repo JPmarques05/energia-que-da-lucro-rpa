@@ -1,0 +1,118 @@
+[
+  {
+    "loja_id": "padaria-01",
+    "periodicidade": "semanal",
+    "periodo": "2026-11-02/2026-11-08",
+    "inicio_periodo": "2026-11-02",
+    "fim_periodo": "2026-11-08",
+    "total_desperdicio_kwh": 21.7,
+    "total_custo_estimado_rs": 19.53,
+    "equipamentos": [
+      {
+        "equipamento_id": "expositor-2",
+        "desperdicio_kwh": 12.5,
+        "custo_estimado_rs": 11.25,
+        "quantidade_eventos": 18
+      },
+      {
+        "equipamento_id": "freezer-1",
+        "desperdicio_kwh": 6.2,
+        "custo_estimado_rs": 5.58,
+        "quantidade_eventos": 9
+      },
+      {
+        "equipamento_id": "expositor-1",
+        "desperdicio_kwh": 3,
+        "custo_estimado_rs": 2.7,
+        "quantidade_eventos": 5
+      }
+    ]
+  },
+  {
+    "loja_id": "mercado-01",
+    "periodicidade": "semanal",
+    "periodo": "2026-11-02/2026-11-08",
+    "inicio_periodo": "2026-11-02",
+    "fim_periodo": "2026-11-08",
+    "total_desperdicio_kwh": 29.5,
+    "total_custo_estimado_rs": 26.55,
+    "equipamentos": [
+      {
+        "equipamento_id": "freezer-1",
+        "desperdicio_kwh": 16,
+        "custo_estimado_rs": 14.4,
+        "quantidade_eventos": 22
+      },
+      {
+        "equipamento_id": "expositor-3",
+        "desperdicio_kwh": 9.5,
+        "custo_estimado_rs": 8.55,
+        "quantidade_eventos": 14
+      },
+      {
+        "equipamento_id": "expositor-1",
+        "desperdicio_kwh": 4,
+        "custo_estimado_rs": 3.6,
+        "quantidade_eventos": 6
+      }
+    ]
+  },
+  {
+    "loja_id": "padaria-01",
+    "periodicidade": "mensal",
+    "periodo": "2026-10",
+    "inicio_periodo": "2026-10-01",
+    "fim_periodo": "2026-10-31",
+    "total_desperdicio_kwh": 80,
+    "total_custo_estimado_rs": 72.0,
+    "equipamentos": [
+      {
+        "equipamento_id": "expositor-2",
+        "desperdicio_kwh": 42,
+        "custo_estimado_rs": 37.8,
+        "quantidade_eventos": 60
+      },
+      {
+        "equipamento_id": "freezer-1",
+        "desperdicio_kwh": 24,
+        "custo_estimado_rs": 21.6,
+        "quantidade_eventos": 35
+      },
+      {
+        "equipamento_id": "expositor-1",
+        "desperdicio_kwh": 14,
+        "custo_estimado_rs": 12.6,
+        "quantidade_eventos": 21
+      }
+    ]
+  },
+  {
+    "loja_id": "mercado-01",
+    "periodicidade": "mensal",
+    "periodo": "2026-10",
+    "inicio_periodo": "2026-10-01",
+    "fim_periodo": "2026-10-31",
+    "total_desperdicio_kwh": 110,
+    "total_custo_estimado_rs": 99.0,
+    "equipamentos": [
+      {
+        "equipamento_id": "freezer-1",
+        "desperdicio_kwh": 55,
+        "custo_estimado_rs": 49.5,
+        "quantidade_eventos": 76
+      },
+      {
+        "equipamento_id": "expositor-3",
+        "desperdicio_kwh": 36,
+        "custo_estimado_rs": 32.4,
+        "quantidade_eventos": 48
+      },
+      {
+        "equipamento_id": "expositor-1",
+        "desperdicio_kwh": 19,
+        "custo_estimado_rs": 17.1,
+        "quantidade_eventos": 29
+      }
+    ]
+  }
+]

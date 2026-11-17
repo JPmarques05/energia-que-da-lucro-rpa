@@ -1,0 +1,43 @@
+[
+  {
+    "loja_id": "padaria-01",
+    "nome": "Padaria de Bairro",
+    "fuso_horario": "America/Sao_Paulo",
+    "horario_funcionamento": {
+      "abertura": "06:00",
+      "fechamento": "20:00"
+    },
+    "equipamentos": [
+      "expositor-1",
+      "expositor-2",
+      "freezer-1",
+      "iluminacao-salao"
+    ],
+    "destinatarios": {
+      "email": null,
+      "telegram_chat_id": null
+    }
+  },
+  {
+    "loja_id": "mercado-01",
+    "nome": "Mercado de Bairro",
+    "fuso_horario": "America/Sao_Paulo",
+    "horario_funcionamento": {
+      "abertura": "07:00",
+      "fechamento": "21:00"
+    },
+    "equipamentos": [
+      "expositor-1",
+      "expositor-2",
+      "expositor-3",
+      "freezer-1",
+      "freezer-2",
+      "iluminacao-salao",
+      "iluminacao-estoque"
+    ],
+    "destinatarios": {
+      "email": null,
+      "telegram_chat_id": null
+    }
+  }
+]

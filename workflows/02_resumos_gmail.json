@@ -1,0 +1,591 @@
+{
+  "name": "Energia que dá Lucro - Resumos Gmail",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "5544e166-0e9f-48a6-9c4e-83e857008013",
+      "name": "Executar demonstração",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "id": "cb588a06-c3ba-483d-8b17-e4e09128ee66",
+      "name": "Segunda às 08h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "3d3a4c6b-c5f5-4efd-91a2-f4954dad7a59",
+      "name": "Dia 1 às 08h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const s=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); const d=new Date(s+'T00:00:00Z'); const ago=n=>new Date(d.getTime()-n*86400000).toISOString().slice(0,10); return [{json:{periodos:[{periodicidade:'semanal',periodo:ago(7)+'/'+ago(1)}]}}];"
+      },
+      "id": "02ea0784-9e76-44a9-b7f1-3fac11ddcb59",
+      "name": "Período semanal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const a=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());const d=new Date(a.slice(0,7)+'-01T00:00:00Z');d.setUTCMonth(d.getUTCMonth()-1);return [{json:{periodos:[{periodicidade:'mensal',periodo:d.toISOString().slice(0,7)}]}}];"
+      },
+      "id": "28a31f7b-32b6-4623-9134-ad9b9b83389b",
+      "name": "Período mensal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{periodos:[{periodicidade:'semanal',periodo:'2026-11-02/2026-11-08'},{periodicidade:'mensal',periodo:'2026-10'}]}}];"
+      },
+      "id": "bd845203-7a3d-40f3-a0a8-cf015381a997",
+      "name": "Períodos da demonstração",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/lojas.json",
+        "options": {}
+      },
+      "id": "20fe6c8c-5f52-4249-a2dc-bd18de1cd22f",
+      "name": "Ler lojas",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        432,
+        160
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const arquivo = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst lojas = JSON.parse(arquivo.toString('utf8'));\n\nif (!Array.isArray(lojas)) {\n  throw new Error('O arquivo lojas.json deve conter uma lista de lojas.');\n}\n\nlet periodos;\n\ntry {\n  periodos = $('Períodos da demonstração').first().json.periodos;\n} catch (erro) {\n  // Este início não foi usado.\n}\n\nif (!periodos) {\n  try {\n    periodos = $('Período semanal').first().json.periodos;\n  } catch (erro) {\n    // Este início não foi usado.\n  }\n}\n\nif (!periodos) {\n  try {\n    periodos = $('Período mensal').first().json.periodos;\n  } catch (erro) {\n    // Este início não foi usado.\n  }\n}\n\nif (!Array.isArray(periodos)) {\n  throw new Error('Não foi possível identificar o período do resumo.');\n}\n\nreturn [{\n  json: {\n    lojas,\n    periodos\n  }\n}];"
+      },
+      "id": "9b3e1513-d253-446a-9d21-b1639433af22",
+      "name": "Interpretar lojas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/resumos.json",
+        "options": {}
+      },
+      "id": "2fd4a380-2aa8-440c-9bf8-b53f97624a43",
+      "name": "Ler resumos",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        848,
+        160
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const dados=JSON.parse((await this.helpers.getBinaryDataBuffer(0,'data')).toString('utf8'));if(!Array.isArray(dados))throw new Error('resumos.json deve ser uma lista');return [{json:{...$('Interpretar lojas').first().json,resumos:dados}}];"
+      },
+      "id": "940c5dba-7080-4008-aa07-34a414b97b31",
+      "name": "Interpretar resumos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/recomendacoes.json",
+        "options": {}
+      },
+      "id": "901f0427-d6a0-41f6-b950-2bb7aa84de9c",
+      "name": "Ler recomendações",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        160
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const arquivo = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst recomendacoes = JSON.parse(arquivo.toString('utf8'));\n\nif (!Array.isArray(recomendacoes)) {\n  throw new Error('O arquivo recomendacoes.json deve conter uma lista.');\n}\n\nconst dados = $('Interpretar resumos').first().json;\n\nif (!Array.isArray(dados.lojas)) {\n  throw new Error('A lista de lojas não foi encontrada.');\n}\n\nif (!Array.isArray(dados.periodos)) {\n  throw new Error('A lista de períodos não foi encontrada.');\n}\n\nif (!Array.isArray(dados.resumos)) {\n  throw new Error('A lista de resumos não foi encontrada.');\n}\n\nreturn dados.periodos.flatMap(periodo =>\n  dados.lojas.map(loja => ({\n    json: {\n      loja,\n      periodo: periodo.periodo,\n      periodicidade: periodo.periodicidade,\n      resumos: dados.resumos,\n      recomendacoes\n    }\n  }))\n);"
+      },
+      "id": "85aa31e0-26c6-4b18-b064-356637cbbaef",
+      "name": "Preparar lojas e períodos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f4c17b8e-c6a5-47d5-bbb6-729d300ea60f",
+      "name": "Percorrer resumos",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1696,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "/files/controle_resumos.json",
+        "options": {}
+      },
+      "id": "9a6ffc3b-1d56-412c-abd0-1c1edb7208b5",
+      "name": "Ler controle",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        288
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const b=await this.helpers.getBinaryDataBuffer(0,'data');const c=JSON.parse(b.toString('utf8'));if(!Array.isArray(c.resumos)||!Array.isArray(c.logs))throw new Error('Controle inválido');\nconst x=$('Percorrer resumos').first().json,l=x.loja,agora=new Date().toISOString();const resumo=x.resumos.find(r=>r.loja_id===l.loja_id&&r.periodo===x.periodo&&r.periodicidade===x.periodicidade);const mes=x.periodo.slice(0,7);const rec=x.recomendacoes.find(r=>r.loja_id===l.loja_id&&r.periodo===mes);const chave=l.loja_id+'|'+x.periodicidade+'|'+x.periodo;const email=l.destinatarios?.email;let acao='ignorar',motivo='',assunto='',html='';\nconst esc=s=>String(s??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[ch]));\nif(c.resumos.some(r=>r.chave===chave)){acao='duplicado';motivo='Já existe registro para loja e período';}\nelse if(!resumo||!Array.isArray(resumo.equipamentos)||!Number.isFinite(resumo.total_desperdicio_kwh)||!Number.isFinite(resumo.total_custo_estimado_rs)){acao='invalido';motivo='Resumo ausente ou inválido';}\nelse if(typeof email!=='string'||!/^\\S+@\\S+\\.\\S+$/.test(email)){acao='configuracao';motivo='E-mail destinatário ausente ou inválido';}\nelse{acao='enviar';assunto='Energia que dá Lucro - resumo '+x.periodicidade+' - '+x.periodo;const itens=[...resumo.equipamentos].sort((a,b)=>b.custo_estimado_rs-a.custo_estimado_rs).map(e=>'<li>'+esc(e.equipamento_id)+': '+Number(e.desperdicio_kwh).toFixed(2)+' kWh — R$ '+Number(e.custo_estimado_rs).toFixed(2)+'</li>').join('');const recomendacao=rec&&!rec.nao_consta&&rec.recomendacao?esc(rec.recomendacao):'Recomendação indisponível para este período.';html='<h2>Energia que dá Lucro</h2><p>Loja: '+esc(l.nome)+'<br>Período: '+esc(x.periodo)+'</p><p>Desperdício estimado: <strong>'+resumo.total_desperdicio_kwh.toFixed(2)+' kWh — R$ '+resumo.total_custo_estimado_rs.toFixed(2)+'</strong></p><h3>Equipamentos</h3><ul>'+itens+'</ul><h3>Recomendação</h3><p>'+recomendacao+'</p>';c.resumos.push({chave,loja_id:l.loja_id,periodicidade:x.periodicidade,periodo:x.periodo,canal:'email',status:'reservado',registrado_em:agora});motivo='Reserva criada antes do envio';}\nc.logs.push({data_hora:agora,loja_id:l.loja_id,periodo:x.periodo,periodicidade:x.periodicidade,resultado:acao,motivo});return [{json:{acao,chave,email,assunto,html,controle:c},binary:{data:{data:Buffer.from(JSON.stringify(c,null,2),'utf8').toString('base64'),mimeType:'application/json',fileName:'controle_resumos.json'}}}];"
+      },
+      "id": "6896d610-1cd6-43f8-9688-58c5443d0e96",
+      "name": "Validar e reservar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2112,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/controle_resumos.json",
+        "options": {}
+      },
+      "id": "d9c10bed-5d9a-4df7-9b08-32b401cb393e",
+      "name": "Salvar reserva",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f715ac7b-49c9-43ff-abd5-7caf154efb69",
+              "leftValue": "={{ $json.acao }}",
+              "rightValue": "enviar",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "012fc572-22ce-43bc-bbbc-c503e359b815",
+      "name": "Pode enviar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2528,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "CONFIGURE_SEU_GMAIL@gmail.com",
+        "toEmail": "={{ $json.email }}",
+        "subject": "={{ $json.assunto }}",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "b3017f8d-9616-40c0-a6c5-8f689c04d070",
+      "name": "Enviar pelo Gmail",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2752,
+        160
+      ],
+      "webhookId": "8dfbebbc-8a53-47e4-a957-61795bdb1e98",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const p=$('Validar e reservar').first().json,r=$input.first().json,c=p.controle,t=new Date().toISOString();const item=c.resumos.find(x=>x.chave===p.chave&&x.status==='reservado');if(!item)throw new Error('Reserva não encontrada');const ok=Boolean(r.messageId)&&!r.error&&(!Array.isArray(r.rejected)||r.rejected.length===0);item.status=ok?'enviado':'incerto';item.enviado_em=ok?t:null;c.logs.push({data_hora:t,loja_id:item.loja_id,periodo:item.periodo,periodicidade:item.periodicidade,resultado:item.status,motivo:ok?'Servidor SMTP aceitou a mensagem':'Envio sem confirmação; conferir antes de reenviar'});return [{json:{status:item.status,chave:item.chave},binary:{data:{data:Buffer.from(JSON.stringify(c,null,2),'utf8').toString('base64'),mimeType:'application/json',fileName:'controle_resumos.json'}}}];"
+      },
+      "id": "eb20ba31-aacf-4ab2-a5db-6bb1be856211",
+      "name": "Registrar resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/files/controle_resumos.json",
+        "options": {}
+      },
+      "id": "a060cc4d-2a2b-405a-a331-6906540bde9b",
+      "name": "Salvar resultado",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        3168,
+        160
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b708c44d-e952-45c0-9454-d232fd65fd36",
+      "name": "Lote concluído",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Resumos | configurar antes do envio\n1. Copie controle_resumos.json para /files.\n2. Defina destinatários em lojas.json.\n3. Configure o remetente e credencial SMTP Gmail.\n4. Teste manualmente e confira o controle. Não sobreponha execuções.",
+        "height": 260,
+        "width": 540,
+        "color": 5
+      },
+      "id": "c6f7aa4c-cd25-4c5d-9bce-c108a7ac25fb",
+      "name": "Leia primeiro",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        464
+      ]
+    }
+  ],
+  "connections": {
+    "Executar demonstração": {
+      "main": [
+        [
+          {
+            "node": "Períodos da demonstração",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Segunda às 08h": {
+      "main": [
+        [
+          {
+            "node": "Período semanal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dia 1 às 08h": {
+      "main": [
+        [
+          {
+            "node": "Período mensal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Períodos da demonstração": {
+      "main": [
+        [
+          {
+            "node": "Ler lojas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Período semanal": {
+      "main": [
+        [
+          {
+            "node": "Ler lojas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Período mensal": {
+      "main": [
+        [
+          {
+            "node": "Ler lojas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler lojas": {
+      "main": [
+        [
+          {
+            "node": "Interpretar lojas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interpretar lojas": {
+      "main": [
+        [
+          {
+            "node": "Ler resumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler resumos": {
+      "main": [
+        [
+          {
+            "node": "Interpretar resumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Interpretar resumos": {
+      "main": [
+        [
+          {
+            "node": "Ler recomendações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler recomendações": {
+      "main": [
+        [
+          {
+            "node": "Preparar lojas e períodos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar lojas e períodos": {
+      "main": [
+        [
+          {
+            "node": "Percorrer resumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler controle": {
+      "main": [
+        [
+          {
+            "node": "Validar e reservar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar e reservar": {
+      "main": [
+        [
+          {
+            "node": "Salvar reserva",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar reserva": {
+      "main": [
+        [
+          {
+            "node": "Pode enviar?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar pelo Gmail": {
+      "main": [
+        [
+          {
+            "node": "Registrar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar resultado": {
+      "main": [
+        [
+          {
+            "node": "Salvar resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar resultado": {
+      "main": [
+        [
+          {
+            "node": "Percorrer resumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Percorrer resumos": {
+      "main": [
+        [
+          {
+            "node": "Lote concluído",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ler controle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pode enviar?": {
+      "main": [
+        [
+          {
+            "node": "Enviar pelo Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Percorrer resumos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "nodeGroups": []
+}

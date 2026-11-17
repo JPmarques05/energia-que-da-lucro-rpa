@@ -1,0 +1,142 @@
+{
+  "resumos": [
+    {
+      "chave": "padaria-01|semanal|2026-11-02/2026-11-08",
+      "loja_id": "padaria-01",
+      "periodicidade": "semanal",
+      "periodo": "2026-11-02/2026-11-08",
+      "canal": "email",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T13:59:57.728Z",
+      "enviado_em": "2026-11-17T14:00:03.402Z"
+    },
+    {
+      "chave": "mercado-01|semanal|2026-11-02/2026-11-08",
+      "loja_id": "mercado-01",
+      "periodicidade": "semanal",
+      "periodo": "2026-11-02/2026-11-08",
+      "canal": "email",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T14:00:03.461Z",
+      "enviado_em": "2026-11-17T14:00:07.765Z"
+    },
+    {
+      "chave": "padaria-01|mensal|2026-10",
+      "loja_id": "padaria-01",
+      "periodicidade": "mensal",
+      "periodo": "2026-10",
+      "canal": "email",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T14:00:07.813Z",
+      "enviado_em": "2026-11-17T14:00:11.966Z"
+    },
+    {
+      "chave": "mercado-01|mensal|2026-10",
+      "loja_id": "mercado-01",
+      "periodicidade": "mensal",
+      "periodo": "2026-10",
+      "canal": "email",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T14:00:12.018Z",
+      "enviado_em": "2026-11-17T14:00:16.927Z"
+    }
+  ],
+  "logs": [
+    {
+      "data_hora": "2026-11-17T13:59:57.728Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "enviar",
+      "motivo": "Reserva criada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:03.402Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "enviado",
+      "motivo": "Servidor SMTP aceitou a mensagem"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:03.461Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "enviar",
+      "motivo": "Reserva criada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:07.765Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "enviado",
+      "motivo": "Servidor SMTP aceitou a mensagem"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:07.813Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "enviar",
+      "motivo": "Reserva criada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:11.966Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "enviado",
+      "motivo": "Servidor SMTP aceitou a mensagem"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:12.018Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "enviar",
+      "motivo": "Reserva criada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T14:00:16.927Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "enviado",
+      "motivo": "Servidor SMTP aceitou a mensagem"
+    },
+    {
+      "data_hora": "2026-11-17T14:43:51.230Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "duplicado",
+      "motivo": "Já existe registro para loja e período"
+    },
+    {
+      "data_hora": "2026-11-17T14:43:51.291Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-11-02/2026-11-08",
+      "periodicidade": "semanal",
+      "resultado": "duplicado",
+      "motivo": "Já existe registro para loja e período"
+    },
+    {
+      "data_hora": "2026-11-17T14:43:51.347Z",
+      "loja_id": "padaria-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "duplicado",
+      "motivo": "Já existe registro para loja e período"
+    },
+    {
+      "data_hora": "2026-11-17T14:43:51.398Z",
+      "loja_id": "mercado-01",
+      "periodo": "2026-10",
+      "periodicidade": "mensal",
+      "resultado": "duplicado",
+      "motivo": "Já existe registro para loja e período"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "alertas": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001-telegram",
+      "evento_id": "00000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "canal": "telegram",
+      "status": "enviado",
+      "registrado_em": "2026-11-13T20:07:01.874Z",
+      "mensagem": "⚡ Energia que dá Lucro\nPadaria de Bairro: expositor-2 registrou porta aberta por 95 segundos. Verifique o equipamento para evitar desperdício.",
+      "enviado_em": "2026-11-13T20:07:08.704Z"
+    },
+    {
+      "id": "00000000-0000-4000-8000-000000000003-telegram",
+      "evento_id": "00000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "canal": "telegram",
+      "status": "enviado",
+      "registrado_em": "2026-11-13T20:07:08.826Z",
+      "mensagem": "⚡ Energia que dá Lucro\nMercado de Bairro: freezer-1 registrou porta aberta por 120 segundos. Verifique o equipamento para evitar desperdício.",
+      "enviado_em": "2026-11-13T20:07:12.979Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000001-telegram",
+      "evento_id": "10000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "canal": "telegram",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T12:00:08.450Z",
+      "mensagem": "⚡ Energia que dá Lucro\nPadaria de Bairro: expositor-2 registrou porta aberta por 95 segundos. Verifique o equipamento para evitar desperdício.",
+      "enviado_em": "2026-11-17T12:00:09.841Z"
+    },
+    {
+      "id": "10000000-0000-4000-8000-000000000003-telegram",
+      "evento_id": "10000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "canal": "telegram",
+      "status": "enviado",
+      "registrado_em": "2026-11-17T12:00:09.960Z",
+      "mensagem": "⚡ Energia que dá Lucro\nMercado de Bairro: freezer-1 registrou porta aberta por 120 segundos. Verifique o equipamento para evitar desperdício.",
+      "enviado_em": "2026-11-17T12:00:10.934Z"
+    }
+  ],
+  "logs": [
+    {
+      "data_hora": "2026-11-13T20:07:01.874Z",
+      "evento_id": "00000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "enviar",
+      "motivo": "reserva registrada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:08.704Z",
+      "evento_id": "00000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "enviado",
+      "motivo": "Envio confirmado pelo Telegram"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:08.769Z",
+      "evento_id": "00000000-0000-4000-8000-000000000002",
+      "loja_id": "padaria-01",
+      "resultado": "ignorar",
+      "motivo": "duração não superior a 60 segundos"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:08.826Z",
+      "evento_id": "00000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "resultado": "enviar",
+      "motivo": "reserva registrada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:12.979Z",
+      "evento_id": "00000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "resultado": "enviado",
+      "motivo": "Envio confirmado pelo Telegram"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:13.037Z",
+      "evento_id": "00000000-0000-4000-8000-000000000004",
+      "loja_id": "mercado-01",
+      "resultado": "ignorar",
+      "motivo": "evento fora do horário de funcionamento"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:13.106Z",
+      "evento_id": "00000000-0000-4000-8000-000000000005",
+      "loja_id": "padaria-01",
+      "resultado": "ignorar",
+      "motivo": "duração não superior a 60 segundos"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:13.182Z",
+      "evento_id": "00000000-0000-4000-8000-000000000006",
+      "loja_id": "padaria-01",
+      "resultado": "invalido",
+      "motivo": "duração inválida"
+    },
+    {
+      "data_hora": "2026-11-13T20:07:13.235Z",
+      "evento_id": "00000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "duplicado",
+      "motivo": "evento já possui registro de envio ou reserva"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:08.450Z",
+      "evento_id": "10000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "enviar",
+      "motivo": "reserva registrada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:09.841Z",
+      "evento_id": "10000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "enviado",
+      "motivo": "Envio confirmado pelo Telegram"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:09.898Z",
+      "evento_id": "00000000-0000-4000-8000-000000000002",
+      "loja_id": "padaria-01",
+      "resultado": "ignorar",
+      "motivo": "duração não superior a 60 segundos"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:09.960Z",
+      "evento_id": "10000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "resultado": "enviar",
+      "motivo": "reserva registrada antes do envio"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:10.934Z",
+      "evento_id": "10000000-0000-4000-8000-000000000003",
+      "loja_id": "mercado-01",
+      "resultado": "enviado",
+      "motivo": "Envio confirmado pelo Telegram"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:10.985Z",
+      "evento_id": "00000000-0000-4000-8000-000000000004",
+      "loja_id": "mercado-01",
+      "resultado": "ignorar",
+      "motivo": "evento fora do horário de funcionamento"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:11.042Z",
+      "evento_id": "00000000-0000-4000-8000-000000000005",
+      "loja_id": "padaria-01",
+      "resultado": "ignorar",
+      "motivo": "duração não superior a 60 segundos"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:11.099Z",
+      "evento_id": "00000000-0000-4000-8000-000000000006",
+      "loja_id": "padaria-01",
+      "resultado": "invalido",
+      "motivo": "duração inválida"
+    },
+    {
+      "data_hora": "2026-11-17T12:00:11.157Z",
+      "evento_id": "10000000-0000-4000-8000-000000000001",
+      "loja_id": "padaria-01",
+      "resultado": "duplicado",
+      "motivo": "evento já possui registro de envio ou reserva"
+    }
+  ]
+}

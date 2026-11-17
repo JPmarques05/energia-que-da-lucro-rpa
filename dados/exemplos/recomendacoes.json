@@ -1,0 +1,42 @@
+[
+  {
+    "loja_id": "padaria-01",
+    "periodo": "2026-10",
+    "nao_consta": false,
+    "recomendacao": "Oriente a equipe a conferir o fechamento das portas dos expositores após o uso.",
+    "fonte": {
+      "titulo": "Fonte ilustrativa para demonstração; referência real pendente",
+      "trecho_id": "trecho-exemplo-01"
+    }
+  },
+  {
+    "loja_id": "mercado-01",
+    "periodo": "2026-10",
+    "nao_consta": false,
+    "recomendacao": "Verifique regularmente o fechamento do freezer e organize a reposição para reduzir o tempo de porta aberta.",
+    "fonte": {
+      "titulo": "Fonte ilustrativa para demonstração; referência real pendente",
+      "trecho_id": "trecho-exemplo-01"
+    }
+  },
+  {
+    "loja_id": "padaria-01",
+    "periodo": "2026-11",
+    "nao_consta": false,
+    "recomendacao": "Oriente a equipe a conferir o fechamento das portas dos expositores após o uso.",
+    "fonte": {
+      "titulo": "Fonte ilustrativa para demonstração; referência real pendente",
+      "trecho_id": "trecho-exemplo-01"
+    }
+  },
+  {
+    "loja_id": "mercado-01",
+    "periodo": "2026-11",
+    "nao_consta": false,
+    "recomendacao": "Verifique regularmente o fechamento do freezer e organize a reposição para reduzir o tempo de porta aberta.",
+    "fonte": {
+      "titulo": "Fonte ilustrativa para demonstração; referência real pendente",
+      "trecho_id": "trecho-exemplo-01"
+    }
+  }
+]
