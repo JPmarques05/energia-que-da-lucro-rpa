@@ -179,4 +179,4 @@ Imagens estão em `evidencias/prints/`; registros de teste estão em `evidencias
 
 ## Entrega acadêmica
 
-O repositório reúne fluxos, dados demonstrativos, BPMNs, página de consulta e evidências. O relatório completo deve ser desenvolvido separadamente com as capturas, interpretação dos testes e os requisitos específicos informados pelo professor. O vídeo de apresentação também deve ser preparado e seu link acrescentado quando estiver disponível.
+O repositório reúne fluxos, dados demonstrativos, BPMNs, página de consulta e evidências. O relatório completo deve ser desenvolvido separadamente com as capturas, interpretação dos testes e os requisitos específicos informados pelo professor. Segue aqui, o link do vídeo apresentação do projeto e dos fluxos: https://youtu.be/Nt88ZllvvSY?is=G8UJEKpawt2OYuMg
